@@ -13,8 +13,9 @@ import (
 
 func init() {
 	Registry = prometheus.NewRegistry()
-	Registry.MustRegister(buildInfoMetrics)
-	buildInfoMetrics.Set(1)
+	Registry.MustRegister(BuildInfoMetrics)
+	Registry.MustRegister(OptEvent)
+	BuildInfoMetrics.Set(1)
 	promHandler = promhttp.HandlerFor(Registry, promhttp.HandlerOpts{})
 }
 
@@ -22,7 +23,7 @@ func init() {
 var Registry *prometheus.Registry
 var promHandler http.Handler
 var (
-	buildInfoMetrics = prometheus.NewGauge(
+	BuildInfoMetrics = prometheus.NewGauge(
 		prometheus.GaugeOpts{
 			Name: "graylog_alert_exporter_build_info",
 			Help: "Exporter build information",
@@ -32,6 +33,14 @@ var (
 				"date":    meta.Date,
 			},
 		},
+	)
+
+	OptEvent = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "main_metrics",
+			Help: "Main metric",
+		},
+		[]string{"event_title", "event_description", "event_source", "event_priority"},
 	)
 )
 

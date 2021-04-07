@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/prometheus/client_golang/prometheus"
 )
 
 type GraylogOutput struct {
@@ -57,12 +56,14 @@ func UserServePayload(c *fiber.Ctx) error {
 			"message": err,
 		})
 	}
-	NewMetrics(&AlertBody)
-	return nil
+	alertCollect(&AlertBody)
+	return c.Status(http.StatusCreated).JSON(&fiber.Map{
+		"status":  "success",
+		"message": "Created",
+	})
 }
 
 type AlertMetrics struct {
-	EventID          string
 	EventTitle       string
 	EventDescription string
 	EventTimeStamp   *time.Time
@@ -70,31 +71,28 @@ type AlertMetrics struct {
 	EventPriority    int
 }
 
-func NewMetrics(g *GraylogOutput) {
+func alertCollect(g *GraylogOutput) {
 	newMetrics := AlertMetrics{
-		EventID:          g.EventDefinitionID,
 		EventTitle:       g.EventDefinitionTitle,
 		EventDescription: g.EventDefinitionDescription,
 		EventTimeStamp:   g.Event.Timestamp,
 		EventSource:      g.Event.Source,
 		EventPriority:    g.Event.Priority,
 	}
-	metrics := prometheus.NewGauge(
-		prometheus.GaugeOpts{
-			Name: "main_metrics",
-			Help: "Main metric",
-			ConstLabels: prometheus.Labels{
-				"event_title":       newMetrics.EventTitle,
-				"event_description": newMetrics.EventDescription,
-				"event_timestamp":   newMetrics.EventTimeStamp.String(),
-				"event_source":      newMetrics.EventSource,
-				"event_priority":    strconv.Itoa(newMetrics.EventPriority),
-			},
-		},
-	)
-	prom.Registry.MustRegister(metrics)
-}
 
-func (c AlertMetrics) Describe(ch chan<- *prometheus.Desc) {
-	ch <- prometheus.NewDesc("dummy", "dummy", nil, nil)
+	// factory := promauto.With(prom.Registry)
+	// optEvent := prometheus.NewCounterVec(
+	// 	prometheus.CounterOpts{
+	// 		Name: "main_metrics",
+	// 		Help: "Main metric",
+	// 	},
+	// 	[]string{"event_title", "event_description", "event_timestamp", "event_source", "event_priority"},
+	// )
+	// prometheus.MustRegister(optEvent)
+	prom.OptEvent.WithLabelValues(
+		newMetrics.EventTitle,
+		newMetrics.EventDescription,
+		newMetrics.EventSource,
+		strconv.Itoa(newMetrics.EventPriority),
+	).Inc()
 }
