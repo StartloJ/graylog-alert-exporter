@@ -31,7 +31,7 @@ Usage:
 ## Route
 
 1. / -> Provide home page will redirect to metrics.
-2. /metrics -> Recieve event from graylog with http POST method see api spec and Provision data metrics in GET method for prometheus
+2. /metrics -> Receive event from graylog with http POST method see api spec and Provision data metrics in http GET method for prometheus
 3. /dashboard -> Basic host resources monitoring
 
 ## graylog spec
