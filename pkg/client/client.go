@@ -1,7 +1,9 @@
 package client
 
 import (
+	"graylog-alert-exporter/pkg/prom"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -40,7 +42,7 @@ type GraylogOutput struct {
 		Timestamp *time.Time             `json:"timestamp"`
 		Source    string                 `json:"source"`
 		StreamIds []string               `json:"stream_ids"`
-		Id        string                 `json:"id"`
+		ID        string                 `json:"id"`
 		Fields    map[string]interface{} `json:"fields"`
 	} `json:"backlog"`
 }
@@ -55,6 +57,7 @@ func UserServePayload(c *fiber.Ctx) error {
 			"message": err,
 		})
 	}
+	NewMetrics(&AlertBody)
 	return nil
 }
 
@@ -67,10 +70,8 @@ type AlertMetrics struct {
 	EventPriority    int
 }
 
-var NewAlert AlertMetrics
-
-func PopPreMetrics(g *GraylogOutput) *AlertMetrics {
-	NewAlert = AlertMetrics{
+func NewMetrics(g *GraylogOutput) {
+	newMetrics := AlertMetrics{
 		EventID:          g.EventDefinitionID,
 		EventTitle:       g.EventDefinitionTitle,
 		EventDescription: g.EventDefinitionDescription,
@@ -78,7 +79,20 @@ func PopPreMetrics(g *GraylogOutput) *AlertMetrics {
 		EventSource:      g.Event.Source,
 		EventPriority:    g.Event.Priority,
 	}
-	return &NewAlert
+	metrics := prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name: "main_metrics",
+			Help: "Main metric",
+			ConstLabels: prometheus.Labels{
+				"event_title":       newMetrics.EventTitle,
+				"event_description": newMetrics.EventDescription,
+				"event_timestamp":   newMetrics.EventTimeStamp.String(),
+				"event_source":      newMetrics.EventSource,
+				"event_priority":    strconv.Itoa(newMetrics.EventPriority),
+			},
+		},
+	)
+	prom.Registry.MustRegister(metrics)
 }
 
 func (c AlertMetrics) Describe(ch chan<- *prometheus.Desc) {

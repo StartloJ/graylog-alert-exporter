@@ -4,16 +4,15 @@ import (
 	"flag"
 	"fmt"
 	"graylog-alert-exporter/pkg/client"
+	"graylog-alert-exporter/pkg/meta"
+	"graylog-alert-exporter/pkg/prom"
 	"log"
 	"net"
 	"os"
 	"strings"
 
-	"github.com/gofiber/adaptor/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func getEnv(key, defaultValue string) string {
@@ -50,6 +49,9 @@ func getListener(listenAddress string) (net.Listener, error) {
 			return listener, fmt.Errorf("parse unix socket listen address %s fialed: %v", listenAddress, err)
 		}
 		listener, err = net.ListenUnix("unix", &net.UnixAddr{Name: path, Net: "unix"})
+		if err != nil {
+			return listener, fmt.Errorf("ListenUnix address %s fialed: %v", listenAddress, err)
+		}
 	} else {
 		listener, err = net.Listen("tcp", listenAddress)
 	}
@@ -61,11 +63,6 @@ func getListener(listenAddress string) (net.Listener, error) {
 }
 
 var (
-	// Set during go build
-	version string
-	commit  string
-	date    string
-
 	// Default values
 	defaultListenAddress = getEnv("GAE_LISTEN_ADDRESS", ":9889")
 	defaultMetricsPath   = getEnv("GAE_TELEMETRY_PATH", "/metrics")
@@ -75,32 +72,11 @@ var (
 	metricsPath   = flag.String("web.metrics-path", defaultMetricsPath, "Path under which to expose metrics")
 )
 
-var (
-	buildInfoMetrics = prometheus.NewGauge(
-		prometheus.GaugeOpts{
-			Name: "graylog_alert_exporter_build_info",
-			Help: "Exporter build information",
-			ConstLabels: prometheus.Labels{
-				"version": version,
-				"commit":  commit,
-				"date":    date,
-			},
-		},
-	)
-)
-
 func main() {
 	flag.Parse()
-
-	fmt.Printf("Graylog Alert Exporter version=%v commit=%v date=%v", version, commit, date)
-
-	r := prometheus.NewRegistry()
-	r.MustRegister(buildInfoMetrics)
-
-	buildInfoMetrics.Set(1)
+	fmt.Printf("Graylog Alert Exporter version=%v commit=%v date=%v", meta.Version, meta.Commit, meta.Date)
 
 	engine := html.New("./html", ".html")
-
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
@@ -110,8 +86,8 @@ func main() {
 			"Link": *metricsPath,
 		})
 	})
-	p := promhttp.HandlerFor(r, promhttp.HandlerOpts{})
-	app.Get(*metricsPath, adaptor.HTTPHandler(p))
+
+	app.Get(*metricsPath, prom.PrometheusHandler())
 	app.Post("/store", client.UserServePayload)
 
 	app.Listen(*listenAddress)
