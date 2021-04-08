@@ -11,4 +11,4 @@ FROM gcr.io/distroless/base
 WORKDIR /
 COPY --from=builder /go/src/StartloJ/graylog-alert-exporter/app /
 EXPOSE 9889
-CMD ["/app"]
+ENTRYPOINT ["/app"]

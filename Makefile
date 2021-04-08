@@ -11,11 +11,11 @@ build:
 	GO111MODULE=on CGO_ENABLED=0 go build -ldflags "-X main.version=$(VERSION) -X main.commit=$(GIT_COMMIT) -X main.date=$(DATE)" -o graylog-alert-exporter
 
 docker:
-	docker build --build-arg=COMMIT=$(git rev-parse --short HEAD) .
+	docker build -t opsta/grayexporter:$(TAG) --build-arg=COMMIT=$(git rev-parse --short HEAD) .
 
 .PHONY: lint
 lint:
-	docker run --rm -v $(shell pwd):go/src/git.opsta.io/graylog-alert-exporter -w go/src/git.opsta.io/graylog-alert-exporter $(GOLANGCI_CONTAINER) golangci-lint run
+	docker run --rm -v $(shell pwd):/go/src/git.opsta.io/graylog-alert-exporter -w /go/src/git.opsta.io/graylog-alert-exporter $(GOLANGCI_CONTAINER) golangci-lint run
 
 .PHONY: clean
 clean:

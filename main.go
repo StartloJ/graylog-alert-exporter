@@ -9,6 +9,7 @@ import (
 	"graylog-alert-exporter/pkg/scheduler"
 	"os"
 
+	"github.com/gobuffalo/packr/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/etag"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -42,7 +43,8 @@ func main() {
 	log.Init()
 	database.Init()
 
-	app := fiber.New(fiber.Config{Views: html.New("./resources", ".html")})
+	engine := html.NewFileSystem(packr.New("Template", "./resource"), ".html")
+	app := fiber.New(fiber.Config{Views: engine})
 	app.Use(logger.New())
 	app.Use(etag.New())
 

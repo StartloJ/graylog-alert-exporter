@@ -9,6 +9,7 @@ import (
 )
 
 func TestAddAlert(t *testing.T) {
+	database.Init()
 	alert := database.Alert{
 		ID:          fmt.Sprintf("%x", sha256.Sum256([]byte("Test Title"+"Test Desc"))),
 		Title:       "Test Title",
