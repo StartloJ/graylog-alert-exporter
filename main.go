@@ -14,7 +14,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/etag"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/template/html"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -54,9 +53,7 @@ func main() {
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Render("index", fiber.Map{"link": viper.GetString("path"), "dashboard": viper.GetBool("dashboard")})
 	})
-	if viper.GetBool("dashboard") {
-		app.Get("/dashboard", monitor.New())
-	}
+
 	app.Get(viper.GetString("path"), handlers.PrometheusHandler)
 	app.Post(viper.GetString("path"), handlers.GetGraylogOutputHandler)
 
