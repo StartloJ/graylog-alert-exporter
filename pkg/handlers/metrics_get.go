@@ -3,7 +3,6 @@ package handlers
 
 import (
 	"graylog-alert-exporter/pkg/database"
-	"strconv"
 
 	"github.com/gofiber/adaptor/v2"
 	"github.com/gofiber/fiber/v2"
@@ -17,9 +16,13 @@ const (
 	Resolved = 0
 )
 
+var (
+	Registry   = prometheus.NewRegistry()
+	HandlerOpt = promhttp.HandlerOpts{}
+)
+
 // PrometheusHandler is handler to control prometheus metrics
 func PrometheusHandler(ctx *fiber.Ctx) error {
-	Registry := prometheus.NewRegistry()
 	BuildInfoMetrics := prometheus.NewBuildInfoCollector()
 	Registry.Register(BuildInfoMetrics)
 
@@ -33,7 +36,7 @@ func PrometheusHandler(ctx *fiber.Ctx) error {
 					"event_title":       alert.Title,
 					"event_description": alert.Description,
 					"event_source":      alert.Source,
-					"event_priority":    strconv.Itoa(alert.Priority),
+					"event_priority":    alert.Priority,
 				},
 			},
 		)
@@ -47,5 +50,5 @@ func PrometheusHandler(ctx *fiber.Ctx) error {
 		}
 	}
 
-	return adaptor.HTTPHandler(promhttp.HandlerFor(Registry, promhttp.HandlerOpts{}))(ctx)
+	return adaptor.HTTPHandler(promhttp.HandlerFor(Registry, HandlerOpt))(ctx)
 }

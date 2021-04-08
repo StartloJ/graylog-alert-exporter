@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"crypto/sha256"
 	"fmt"
+	"graylog-alert-exporter/internal/utils"
 	"graylog-alert-exporter/pkg/database"
 	"time"
 
@@ -49,13 +49,17 @@ type GraylogOutput struct {
 }
 
 // ExtractAlertMetrics return Alert from GraylogOutput
-func (g GraylogOutput) ExtractAlertMetrics() (database.Alert, error) {
-	return database.Alert{
-		ID:          fmt.Sprintf("%x", sha256.Sum256([]byte(g.EventDefinitionTitle+g.Event.Source))),
+func (g GraylogOutput) ExtractAlertMetrics() (*database.Alert, error) {
+	severity, err := utils.RePriority(g.Event.Priority)
+	if err != nil {
+		return nil, err
+	}
+	return &database.Alert{
+		ID:          fmt.Sprintf("%x", utils.Hash(g.EventDefinitionTitle+g.Event.Source)),
 		Title:       g.EventDefinitionTitle,
 		Description: g.EventDefinitionDescription,
 		Source:      g.Event.Source,
-		Priority:    g.Event.Priority,
+		Priority:    severity,
 		Timeout:     viper.GetInt("timeout"),
 	}, nil
 }
@@ -71,7 +75,7 @@ func GetGraylogOutputHandler(c *fiber.Ctx) error {
 		})
 	}
 	alert, _ := g.ExtractAlertMetrics()
-	database.InsertAlert(alert)
+	database.InsertAlert(*alert)
 
 	return c.Status(fiber.StatusCreated).JSON(&fiber.Map{
 		"status":  "success",
