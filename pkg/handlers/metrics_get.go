@@ -9,6 +9,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 const (
@@ -21,8 +22,24 @@ func PrometheusHandler(ctx *fiber.Ctx) error {
 	Registry := prometheus.NewRegistry()
 
 	// Default metrics
-	BuildInfoMetrics := prometheus.NewBuildInfoCollector()
+	GoBuildInfo := prometheus.NewBuildInfoCollector()
+	BuildInfoMetrics := prometheus.NewGauge(
+		prometheus.GaugeOpts{
+			Name: "exporter_build_info",
+			Help: "Build information about the Exporter module.",
+			ConstLabels: prometheus.Labels{
+				"version": viper.GetString("versionNumber"),
+				"commit":  viper.GetString("commit"),
+				"date":    viper.GetString("date"),
+			},
+		},
+	)
+	BuildInfoMetrics.Set(1)
 	err := Registry.Register(BuildInfoMetrics)
+	if err != nil {
+		logrus.Error(err)
+	}
+	err = Registry.Register(GoBuildInfo)
 	if err != nil {
 		logrus.Error(err)
 	}

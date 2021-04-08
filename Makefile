@@ -1,6 +1,6 @@
 VERSION = 0.1.0
 TAG = $(VERSION)
-GIT_COMMIT = $(shell git rev-parse HEAD)
+GIT_COMMIT = $(shell git rev-parse --short HEAD)
 DATE= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 GOLANGCI_CONTAINER=golangci/golangci-lint:v1.39-alpine
 
@@ -11,7 +11,7 @@ build:
 	GO111MODULE=on CGO_ENABLED=0 go build -ldflags "-X main.version=$(VERSION) -X main.commit=$(GIT_COMMIT) -X main.date=$(DATE)" -o graylog-alert-exporter
 
 docker:
-	docker build -t opsta/grayexporter:$(TAG) --build-arg=COMMIT=$(git rev-parse --short HEAD) .
+	docker build -t opsta/grayexporter:$(TAG) --build-arg=COMMIT=$(GIT_COMMIT) --build-arg=VERSION=$(VERSION) --build-arg=DATE=$(DATE) .
 
 .PHONY: lint
 lint:
