@@ -94,6 +94,8 @@ func GetGraylogOutputHandler(c *fiber.Ctx) error {
 	alert, _ := g.ExtractAlertMetrics()
 	database.InsertAlert(*alert)
 
+
+	
 	return c.Status(fiber.StatusCreated).JSON(&fiber.Map{
 		"status":  "success",
 		"message": "created",

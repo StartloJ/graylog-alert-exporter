@@ -16,16 +16,15 @@ const (
 	Resolved = 0
 )
 
-var (
-	Registry   = prometheus.NewRegistry()
-	HandlerOpt = promhttp.HandlerOpts{}
-)
-
 // PrometheusHandler is handler to control prometheus metrics
 func PrometheusHandler(ctx *fiber.Ctx) error {
+	Registry := prometheus.NewRegistry()
+
+	// Default metrics
 	BuildInfoMetrics := prometheus.NewBuildInfoCollector()
 	Registry.Register(BuildInfoMetrics)
 
+	// Alert metrics
 	alerts := database.GetAllAlerts()
 	for _, alert := range alerts {
 		m := prometheus.NewGauge(
@@ -45,5 +44,5 @@ func PrometheusHandler(ctx *fiber.Ctx) error {
 		}
 	}
 
-	return adaptor.HTTPHandler(promhttp.HandlerFor(Registry, HandlerOpt))(ctx)
+	return adaptor.HTTPHandler(promhttp.HandlerFor(Registry, promhttp.HandlerOpts{}))(ctx)
 }

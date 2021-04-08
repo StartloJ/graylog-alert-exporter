@@ -102,6 +102,25 @@ content-type: application/json
             "gl2_source_input":"605f4b96443ebc061fdd705b"
          },
          "id":"679a3700-95f8-11eb-954c-825739bf405c"
+      }, {
+         "index":"test_000",
+         "message":"THIS IS 300",
+         "timestamp":"2021-04-05T10:19:28.751Z",
+         "source":"example.org",
+         "stream_ids":[
+            "000000000000000000000001"
+         ],
+         "fields":{
+            "statuscode":"300",
+            "some_info":"foo",
+            "level":5,
+            "gl2_remote_ip":"172.20.12.110",
+            "gl2_remote_port":55862,
+            "gl2_message_id":"01F2GRPQKH3EKG5B2SYZK9FERX",
+            "gl2_source_node":"7b8c2a7e-98e1-4e4c-9699-905a318cade9",
+            "gl2_source_input":"605f4b96443ebc061fdd705b"
+         },
+         "id":"679a3700-95f8-11eb-954c-825739bf405c"
       }
    ]
 }
