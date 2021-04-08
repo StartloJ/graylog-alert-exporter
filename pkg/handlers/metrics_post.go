@@ -1,14 +1,16 @@
-package client
+package handlers
 
 import (
-	"graylog-alert-exporter/pkg/prom"
-	"net/http"
-	"strconv"
+	"crypto/sha256"
+	"fmt"
+	"graylog-alert-exporter/pkg/database"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/spf13/viper"
 )
 
+// GraylogOutput is json model send from graylog webhook
 type GraylogOutput struct {
 	EventDefinitionID          string `json:"event_definition_id"`
 	EventDefinitionType        string `json:"event_definition_type"`
@@ -46,53 +48,33 @@ type GraylogOutput struct {
 	} `json:"backlog"`
 }
 
-var AlertBody GraylogOutput
+// ExtractAlertMetrics return Alert from GraylogOutput
+func (g GraylogOutput) ExtractAlertMetrics() (database.Alert, error) {
+	return database.Alert{
+		ID:          fmt.Sprintf("%x", sha256.Sum256([]byte(g.EventDefinitionTitle+g.Event.Source))),
+		Title:       g.EventDefinitionTitle,
+		Description: g.EventDefinitionDescription,
+		Source:      g.Event.Source,
+		Priority:    g.Event.Priority,
+		Timeout:     viper.GetInt("timeout"),
+	}, nil
+}
 
-func UserServePayload(c *fiber.Ctx) error {
-	err := c.BodyParser(&AlertBody)
+// GetGraylogOutputHandler is handler for store graylog alert payload
+func GetGraylogOutputHandler(c *fiber.Ctx) error {
+	g := GraylogOutput{}
+	err := c.BodyParser(&g)
 	if err != nil {
-		return c.Status(http.StatusBadRequest).JSON(&fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
 			"status":  "error",
 			"message": err,
 		})
 	}
-	alertCollect(&AlertBody)
-	return c.Status(http.StatusCreated).JSON(&fiber.Map{
+	alert, _ := g.ExtractAlertMetrics()
+	database.InsertAlert(alert)
+
+	return c.Status(fiber.StatusCreated).JSON(&fiber.Map{
 		"status":  "success",
-		"message": "Created",
+		"message": "created",
 	})
-}
-
-type AlertMetrics struct {
-	EventTitle       string
-	EventDescription string
-	EventTimeStamp   *time.Time
-	EventSource      string
-	EventPriority    int
-}
-
-func alertCollect(g *GraylogOutput) {
-	newMetrics := AlertMetrics{
-		EventTitle:       g.EventDefinitionTitle,
-		EventDescription: g.EventDefinitionDescription,
-		EventTimeStamp:   g.Event.Timestamp,
-		EventSource:      g.Event.Source,
-		EventPriority:    g.Event.Priority,
-	}
-
-	// factory := promauto.With(prom.Registry)
-	// optEvent := prometheus.NewCounterVec(
-	// 	prometheus.CounterOpts{
-	// 		Name: "main_metrics",
-	// 		Help: "Main metric",
-	// 	},
-	// 	[]string{"event_title", "event_description", "event_timestamp", "event_source", "event_priority"},
-	// )
-	// prometheus.MustRegister(optEvent)
-	prom.OptEvent.WithLabelValues(
-		newMetrics.EventTitle,
-		newMetrics.EventDescription,
-		newMetrics.EventSource,
-		strconv.Itoa(newMetrics.EventPriority),
-	).Inc()
 }

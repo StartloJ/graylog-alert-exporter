@@ -1,0 +1,162 @@
+POST http://localhost:9889/metrics HTTP/1.1
+content-type: application/json
+
+{
+   "event_definition_id":"605f4ec3443ebc061fdd8755",
+   "event_definition_type":"aggregation-v1",
+   "event_definition_title":"nginx 301",
+   "event_definition_description":"",
+   "job_definition_id":"60368166ed89913d8dc6bcd6",
+   "job_trigger_id":"606ae436443ebc05f2e70f15",
+   "event":{
+      "id":"01F2GRPXE822NY75WDGWNTPW95",
+      "event_definition_type":"aggregation-v1",
+      "event_definition_id":"605f4ec3443ebc061fdd8755",
+      "origin_context":"urn:graylog:message:es:graylog_27:679a3700-95f8-11eb-954c-825739bf405c",
+      "timestamp":"2021-04-05T10:19:28.751Z",
+      "timestamp_processing":"2021-04-05T10:19:34.728Z",
+      "timerange_start":null,
+      "timerange_end":null,
+      "streams":[],
+      "source_streams":[],
+      "message":"nginx 301",
+      "source":"pepodev-test",
+      "key_tuple":[],
+      "key":"",
+      "priority":3,
+      "alert":true,
+      "fields":{}
+   },
+   "backlog":[
+      {
+         "index":"graylog_27",
+         "message":"THIS IS 300",
+         "timestamp":"2021-04-05T10:19:28.751Z",
+         "source":"example.org",
+         "stream_ids":[
+            "000000000000000000000001"
+         ],
+         "fields":{
+            "statuscode":"300",
+            "some_info":"foo",
+            "level":5,
+            "gl2_remote_ip":"172.20.12.110",
+            "gl2_remote_port":55862,
+            "gl2_message_id":"01F2GRPQKH3EKG5B2SYZK9FERX",
+            "gl2_source_node":"7b8c2a7e-98e1-4e4c-9699-905a318cade9",
+            "gl2_source_input":"605f4b96443ebc061fdd705b"
+         },
+         "id":"679a3700-95f8-11eb-954c-825739bf405c"
+      }
+   ]
+}
+
+###
+
+POST http://localhost:9889/metrics HTTP/1.1
+content-type: application/json
+
+{
+   "event_definition_id":"605f4ec3443ebc061fdd8755",
+   "event_definition_type":"aggregation-v1",
+   "event_definition_title":"nginx 404",
+   "event_definition_description":"",
+   "job_definition_id":"60368166ed89913d8dc6bcd6",
+   "job_trigger_id":"606ae436443ebc05f2e70f15",
+   "event":{
+      "id":"01F2GRPXE822NY75WDGWNTPW95",
+      "event_definition_type":"aggregation-v1",
+      "event_definition_id":"605f4ec3443ebc061fdd8755",
+      "origin_context":"urn:graylog:message:es:graylog_27:679a3700-95f8-11eb-954c-825739bf405c",
+      "timestamp":"2021-04-05T10:19:28.751Z",
+      "timestamp_processing":"2021-04-05T10:19:34.728Z",
+      "timerange_start":null,
+      "timerange_end":null,
+      "streams":[],
+      "source_streams":[],
+      "message":"nginx 301",
+      "source":"pepodev-test",
+      "key_tuple":[],
+      "key":"",
+      "priority":3,
+      "alert":true,
+      "fields":{}
+   },
+   "backlog":[
+      {
+         "index":"graylog_27",
+         "message":"THIS IS 300",
+         "timestamp":"2021-04-05T10:19:28.751Z",
+         "source":"example.org",
+         "stream_ids":[
+            "000000000000000000000001"
+         ],
+         "fields":{
+            "statuscode":"300",
+            "some_info":"foo",
+            "level":5,
+            "gl2_remote_ip":"172.20.12.110",
+            "gl2_remote_port":55862,
+            "gl2_message_id":"01F2GRPQKH3EKG5B2SYZK9FERX",
+            "gl2_source_node":"7b8c2a7e-98e1-4e4c-9699-905a318cade9",
+            "gl2_source_input":"605f4b96443ebc061fdd705b"
+         },
+         "id":"679a3700-95f8-11eb-954c-825739bf405c"
+      }
+   ]
+}
+
+###
+
+POST http://localhost:9889/metrics HTTP/1.1
+content-type: application/json
+
+{
+   "event_definition_id":"605f4ec3443ebc061fdd8755",
+   "event_definition_type":"aggregation-v1",
+   "event_definition_title":"nginx 404",
+   "event_definition_description":"",
+   "job_definition_id":"60368166ed89913d8dc6bcd6",
+   "job_trigger_id":"606ae436443ebc05f2e70f15",
+   "event":{
+      "id":"01F2GRPXE822NY75WDGWNTPW95",
+      "event_definition_type":"aggregation-v1",
+      "event_definition_id":"605f4ec3443ebc061fdd8755",
+      "origin_context":"urn:graylog:message:es:graylog_27:679a3700-95f8-11eb-954c-825739bf405c",
+      "timestamp":"2021-04-05T10:19:28.751Z",
+      "timestamp_processing":"2021-04-05T10:19:34.728Z",
+      "timerange_start":null,
+      "timerange_end":null,
+      "streams":[],
+      "source_streams":[],
+      "message":"nginx 301",
+      "source":"pepodev-test-v2",
+      "key_tuple":[],
+      "key":"",
+      "priority":3,
+      "alert":true,
+      "fields":{}
+   },
+   "backlog":[
+      {
+         "index":"graylog_27",
+         "message":"THIS IS 300",
+         "timestamp":"2021-04-05T10:19:28.751Z",
+         "source":"example.org",
+         "stream_ids":[
+            "000000000000000000000001"
+         ],
+         "fields":{
+            "statuscode":"300",
+            "some_info":"foo",
+            "level":5,
+            "gl2_remote_ip":"172.20.12.110",
+            "gl2_remote_port":55862,
+            "gl2_message_id":"01F2GRPQKH3EKG5B2SYZK9FERX",
+            "gl2_source_node":"7b8c2a7e-98e1-4e4c-9699-905a318cade9",
+            "gl2_source_input":"605f4b96443ebc061fdd705b"
+         },
+         "id":"679a3700-95f8-11eb-954c-825739bf405c"
+      }
+   ]
+}
