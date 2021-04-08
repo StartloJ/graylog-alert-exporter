@@ -19,7 +19,7 @@ type Alert struct {
 	Title       string
 	Description string
 	Source      string
-	Priority    int
+	Priority    string
 	Timeout     int
 }
 

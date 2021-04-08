@@ -15,7 +15,7 @@ func TestAddAlert(t *testing.T) {
 		Title:       "Test Title",
 		Description: "Test Desc",
 		Source:      "Test Source",
-		Priority:    3,
+		Priority:    "critical",
 		Timeout:     60,
 	}
 	database.InsertAlert(alert)
@@ -38,7 +38,7 @@ func TestMultiAddAlertAndGetAll(t *testing.T) {
 			Title:       fmt.Sprintf("Test Title %d", i),
 			Description: "Test Desc",
 			Source:      fmt.Sprintf("Test Source %d", i),
-			Priority:    3,
+			Priority:    "critical",
 			Timeout:     60,
 		})
 	}
