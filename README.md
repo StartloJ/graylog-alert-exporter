@@ -17,7 +17,6 @@ See [Release](https://github.com/StartloJ/graylog-alert-exporter/releases) page 
 ```txt
 Usage:
       --caller          enable log method caller in code
-      --dashboard       enable dashboard web service listen at path dashboard
       --debug           enable debug log
       --interval int    interval to check timeout (lower value consume more cpu) (default 5)
       --listen string   Host address to start service listen (default "0.0.0.0:9889")

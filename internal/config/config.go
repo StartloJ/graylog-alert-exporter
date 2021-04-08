@@ -14,7 +14,6 @@ func Init() {
 	pflag.Int("interval", 5, "interval to check timeout (lower value consume more cpu) in second")
 	pflag.Bool("debug", false, "enable debug log")
 	pflag.Bool("caller", false, "enable log method caller in code")
-	pflag.Bool("dashboard", false, "enable dashboard web service listen at path dashboard")
 	pflag.Bool("version", false, "print version")
 	pflag.Parse()
 	viper.BindPFlags(pflag.CommandLine)
@@ -26,5 +25,4 @@ func Init() {
 	viper.BindEnv("timeout")
 	viper.BindEnv("debug")
 	viper.BindEnv("caller")
-	viper.BindEnv("dashboard")
 }
