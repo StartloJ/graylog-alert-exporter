@@ -112,51 +112,160 @@ POST http://localhost:9889/metrics HTTP/1.1
 content-type: application/json
 
 {
-   "event_definition_id":"605f4ec3443ebc061fdd8755",
+   "event_definition_id":"606eacd822399459bdc20022",
    "event_definition_type":"aggregation-v1",
-   "event_definition_title":"nginx 404",
-   "event_definition_description":"",
-   "job_definition_id":"60368166ed89913d8dc6bcd6",
-   "job_trigger_id":"606ae436443ebc05f2e70f15",
+   "event_definition_title":"Test-log alert",
+   "event_definition_description":"for testing log alert",
+   "job_definition_id":"603f138aef75f403091077c5",
+   "job_trigger_id":"606ead9622399459bdc200fa",
    "event":{
-      "id":"01F2GRPXE822NY75WDGWNTPW95",
+      "id":"01F2R5C4HP5BD4B2J9WSQCA2YQ",
       "event_definition_type":"aggregation-v1",
-      "event_definition_id":"605f4ec3443ebc061fdd8755",
-      "origin_context":"urn:graylog:message:es:graylog_27:679a3700-95f8-11eb-954c-825739bf405c",
-      "timestamp":"2021-04-05T10:19:28.751Z",
-      "timestamp_processing":"2021-04-05T10:19:34.728Z",
+      "event_definition_id":"606eacd822399459bdc20022",
+      "origin_context":"urn:graylog:message:es:lego_stg_k8s__133:33d4c7c7-983a-11eb-9d47-0050560104e6",
+      "timestamp":"2021-04-08T07:15:30.175Z",
+      "timestamp_processing":"2021-04-08T07:15:34.070Z",
       "timerange_start":null,
       "timerange_end":null,
-      "streams":[],
-      "source_streams":[],
-      "message":"nginx 301",
-      "source":"pepodev-test-v2",
-      "key_tuple":[],
+      "streams":[
+         
+      ],
+      "source_streams":[
+         
+      ],
+      "message":"Test-log alert",
+      "source":"SLEGOLOGA001G.6",
+      "key_tuple":[
+         
+      ],
       "key":"",
       "priority":3,
       "alert":true,
-      "fields":{}
+      "fields":{
+         
+      }
    },
    "backlog":[
       {
-         "index":"graylog_27",
-         "message":"THIS IS 300",
-         "timestamp":"2021-04-05T10:19:28.751Z",
-         "source":"example.org",
+         "index":"lego_stg_k8s__133",
+         "message":"[2021-04-08T07:15:28.492Z] \"GET /metrics HTTP/1.1\" 200 - \"-\" \"-\" 0 12214 69 68 \"-\" \"Prometheus/2.18.2\" \"5f4d2fdf-fbaf-9049-bf00-2348d2226a75\" \"rabbitmq.storage.svc:9419\" \"10.138.80.175:9419\" outbound|9419||rabbitmq.storage.svc.cluster.local 10.138.80.247:60462 10.138.82.237:9419 10.138.80.247:59156 - default",
+         "timestamp":"2021-04-08T07:15:30.175Z",
+         "source":"10.138.41.115",
          "stream_ids":[
-            "000000000000000000000001"
+            "5fa509721f88c82c945b2337",
+            "000000000000000000000002"
          ],
          "fields":{
-            "statuscode":"300",
-            "some_info":"foo",
-            "level":5,
-            "gl2_remote_ip":"172.20.12.110",
-            "gl2_remote_port":55862,
-            "gl2_message_id":"01F2GRPQKH3EKG5B2SYZK9FERX",
-            "gl2_source_node":"7b8c2a7e-98e1-4e4c-9699-905a318cade9",
-            "gl2_source_input":"605f4b96443ebc061fdd705b"
+            "kubernetes_labels_security_istio_io_tlsMode":"istio",
+            "gl2_remote_ip":"10.138.41.115",
+            "gl2_remote_port":5816,
+            "gl2_source_input":"5f34e9151186fa29be26eac6",
+            "kubernetes_labels_app":"prometheus",
+            "kubernetes_annotations_prometheus_io_path":"/stats/prometheus",
+            "stream":"stdout",
+            "gl2_source_node":"a30ff04e-62ac-4ce7-a159-370c3282d4c8",
+            "kubernetes_labels_statefulset_kubernetes_io_pod-name":"prometheus-prometheus-operator-prometheus-0",
+            "kubernetes_labels_istio_io_rev":"default",
+            "kubernetes_annotations_sidecar_istio_io_status":"{\"version\":\"8e6e902b765af607513b28d284940ee1421e9a0d07698741693b2663c7161c11\",\"initContainers\":[\"istio-init\"],\"containers\":[\"istio-proxy\"],\"volumes\":[\"istio-envoy\",\"istio-data\",\"istio-podinfo\",\"istiod-ca-cert\"],\"imagePullSecrets\":null}",
+            "gl2_accounted_message_size":1663,
+            "kubernetes_annotations_prometheus_io_scrape":"true",
+            "kubernetes_labels_prometheus":"prometheus-operator-prometheus",
+            "kubernetes_labels_service_istio_io_canonical-name":"prometheus",
+            "gl2_message_id":"01F2R5C1HXS69BHYSXS6ZWV81F",
+            "kubernetes_labels_controller-revision-hash":"prometheus-prometheus-operator-prometheus-6766f747b6",
+            "kubernetes_pod_name":"prometheus-prometheus-operator-prometheus-0",
+            "kubernetes_namespace_name":"monitoring",
+            "kubernetes_docker_id":"26646f7ff29b2320cf77ff268a516d342aa372c810893e309a4db6f90a19b529",
+            "kubernetes_annotations_prometheus_io_port":"15020",
+            "kubernetes_pod_id":"a622bac7-f494-4e63-8e61-38125dc6a254",
+            "kubernetes_container_name":"istio-proxy",
+            "time":"2021-04-08T07:15:30.175406845Z",
+            "kubernetes_host":"slegowa003g",
+            "kubernetes_labels_service_istio_io_canonical-revision":"latest"
          },
-         "id":"679a3700-95f8-11eb-954c-825739bf405c"
+         "id":"33d4c7c7-983a-11eb-9d47-0050560104e6"
+      }
+   ]
+}
+
+###
+
+POST http://localhost:9889/metrics HTTP/1.1
+content-type: application/json
+
+{
+   "event_definition_id":"606eacd822399459bdc20022",
+   "event_definition_type":"aggregation-v1",
+   "event_definition_title":"Test-log alert",
+   "event_definition_description":"for testing log alert",
+   "job_definition_id":"603f138aef75f403091077c5",
+   "job_trigger_id":"606ead9522399459bdc200f7",
+   "event":{
+      "id":"01F2R5C44MY67MTT00ZFEPWTSG",
+      "event_definition_type":"aggregation-v1",
+      "event_definition_id":"606eacd822399459bdc20022",
+      "origin_context":"urn:graylog:message:es:lego_stg_k8s__133:27e8deb0-983a-11eb-9d47-0050560104e6",
+      "timestamp":"2021-04-08T07:15:10.172Z",
+      "timestamp_processing":"2021-04-08T07:15:33.652Z",
+      "timerange_start":null,
+      "timerange_end":null,
+      "streams":[
+         
+      ],
+      "source_streams":[
+         
+      ],
+      "message":"Test-log alert",
+      "source":"SLEGOLOGA001G.6",
+      "key_tuple":[
+         
+      ],
+      "key":"",
+      "priority":3,
+      "alert":true,
+      "fields":{
+         
+      }
+   },
+   "backlog":[
+      {
+         "index":"lego_stg_k8s__133",
+         "message":"[2021-04-08T07:15:01.227Z] \"GET /metrics HTTP/1.1\" 503 UF \"-\" \"-\" 0 91 1 - \"-\" \"Prometheus/2.18.2\" \"9b0aa8d1-36c3-9e09-8bef-2d9f446cdb2a\" \"10.138.41.28:10249\" \"10.138.41.28:10249\" PassthroughCluster - 10.138.41.28:10249 10.138.80.247:58920 - allow_any",
+         "timestamp":"2021-04-08T07:15:10.172Z",
+         "source":"10.138.41.115",
+         "stream_ids":[
+            "5fa509721f88c82c945b2337",
+            "000000000000000000000002"
+         ],
+         "fields":{
+            "kubernetes_labels_security_istio_io_tlsMode":"istio",
+            "gl2_remote_ip":"10.138.41.115",
+            "gl2_remote_port":8420,
+            "gl2_source_input":"5f34e9151186fa29be26eac6",
+            "kubernetes_labels_app":"prometheus",
+            "kubernetes_annotations_prometheus_io_path":"/stats/prometheus",
+            "stream":"stdout",
+            "gl2_source_node":"a30ff04e-62ac-4ce7-a159-370c3282d4c8",
+            "kubernetes_labels_statefulset_kubernetes_io_pod-name":"prometheus-prometheus-operator-prometheus-0",
+            "kubernetes_labels_istio_io_rev":"default",
+            "kubernetes_annotations_sidecar_istio_io_status":"{\"version\":\"8e6e902b765af607513b28d284940ee1421e9a0d07698741693b2663c7161c11\",\"initContainers\":[\"istio-init\"],\"containers\":[\"istio-proxy\"],\"volumes\":[\"istio-envoy\",\"istio-data\",\"istio-podinfo\",\"istiod-ca-cert\"],\"imagePullSecrets\":null}",
+            "gl2_accounted_message_size":1605,
+            "kubernetes_annotations_prometheus_io_scrape":"true",
+            "kubernetes_labels_prometheus":"prometheus-operator-prometheus",
+            "kubernetes_labels_service_istio_io_canonical-name":"prometheus",
+            "gl2_message_id":"01F2R5BE0V03BQ0JEZSBJB3MMD",
+            "kubernetes_labels_controller-revision-hash":"prometheus-prometheus-operator-prometheus-6766f747b6",
+            "kubernetes_pod_name":"prometheus-prometheus-operator-prometheus-0",
+            "kubernetes_namespace_name":"monitoring",
+            "kubernetes_docker_id":"26646f7ff29b2320cf77ff268a516d342aa372c810893e309a4db6f90a19b529",
+            "kubernetes_annotations_prometheus_io_port":"15020",
+            "kubernetes_pod_id":"a622bac7-f494-4e63-8e61-38125dc6a254",
+            "kubernetes_container_name":"istio-proxy",
+            "time":"2021-04-08T07:15:10.172236063Z",
+            "kubernetes_host":"slegowa003g",
+            "kubernetes_labels_service_istio_io_canonical-revision":"latest"
+         },
+         "id":"27e8deb0-983a-11eb-9d47-0050560104e6"
       }
    ]
 }
