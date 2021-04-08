@@ -1,3 +1,4 @@
+// Package utils provides utility function to help and reduce dumplicate code
 package utils
 
 import "crypto/sha256"
