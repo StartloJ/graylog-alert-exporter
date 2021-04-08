@@ -2,7 +2,7 @@ VERSION = 0.1.0
 TAG = $(VERSION)
 GIT_COMMIT = $(shell git rev-parse HEAD)
 DATE= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
-GOLANGCI_CONTAINER=golangci/golangci-lint:v1.29-alpine
+GOLANGCI_CONTAINER=golangci/golangci-lint:v1.39-alpine
 
 export DOCKER_BUILDKIT = 1
 

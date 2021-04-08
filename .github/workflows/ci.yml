@@ -1,0 +1,22 @@
+name: goci
+
+on:
+  push:
+    branches:
+    - 'feature/*'
+    - 'main'
+  pull_request:
+jobs:
+  golangci:
+    strategy:
+      matrix:
+        go-version: [1.16.x]
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - use: actions/checkout@v2
+      - name: golangci-lint
+        use: golangci/golangci-lint-action@v2
+        with:
+          version: 1.29
+
