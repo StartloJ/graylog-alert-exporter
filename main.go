@@ -1,12 +1,14 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"graylog-alert-exporter/internal/config"
 	"graylog-alert-exporter/internal/log"
 	"graylog-alert-exporter/pkg/database"
 	"graylog-alert-exporter/pkg/handlers"
 	"graylog-alert-exporter/pkg/scheduler"
+	"net/http"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -23,6 +25,9 @@ var (
 	commit  = "none"
 	date    = "unknown"
 	builtBy = "unknown"
+
+	//go:embed index.html
+	resources embed.FS
 )
 
 func init() {
@@ -42,7 +47,7 @@ func main() {
 	log.Init()
 	database.Init()
 
-	app := fiber.New(fiber.Config{Views: html.New("./resources", ".html")})
+	app := fiber.New(fiber.Config{Views: html.NewFileSystem(http.FS(resources), ".html")})
 	app.Use(logger.New())
 	app.Use(etag.New())
 
