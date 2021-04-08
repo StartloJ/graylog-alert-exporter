@@ -28,7 +28,10 @@ func GetValueFromJSON(path string, j interface{}) interface{} {
 	if err != nil {
 		logrus.Error(err)
 	}
-	json.Unmarshal(b, &obj)
+	err = json.Unmarshal(b, &obj)
+	if err != nil {
+		logrus.Error(err)
+	}
 
 	paths := strings.Split(path, ".")
 	if len(paths) == 1 {

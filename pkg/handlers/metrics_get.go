@@ -22,7 +22,10 @@ func PrometheusHandler(ctx *fiber.Ctx) error {
 
 	// Default metrics
 	BuildInfoMetrics := prometheus.NewBuildInfoCollector()
-	Registry.Register(BuildInfoMetrics)
+	err := Registry.Register(BuildInfoMetrics)
+	if err != nil {
+		logrus.Error(err)
+	}
 
 	// Alert metrics
 	alerts := database.GetAllAlerts()
