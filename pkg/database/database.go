@@ -15,12 +15,10 @@ var db *memdb.MemDB
 
 // Alert is struct of database schema
 type Alert struct {
-	ID          string
-	Title       string
-	Description string
-	Source      string
-	Priority    string
-	Timeout     int
+	ID string
+
+	Timeout int
+	Data    map[string]string
 }
 
 // Init is function to create database schema and create presistance database connection

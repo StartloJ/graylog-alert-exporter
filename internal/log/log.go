@@ -25,9 +25,9 @@ func Init() {
 			"msg":   "Message",
 		},
 	})
-	logrus.SetReportCaller(viper.GetBool("Caller"))
+	logrus.SetReportCaller(viper.GetBool("caller"))
 
-	if viper.GetBool("Debug") {
+	if viper.GetBool("debug") {
 		logrus.SetLevel(logrus.DebugLevel)
 	} else {
 		logrus.SetLevel(logrus.InfoLevel)

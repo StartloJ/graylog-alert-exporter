@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"graylog-alert-exporter/internal/utils"
 	"graylog-alert-exporter/pkg/database"
@@ -48,20 +49,35 @@ type GraylogOutput struct {
 	} `json:"backlog"`
 }
 
+// GetTableIDHash return hash of data use as promary key in database
+func (g GraylogOutput) GetTableIDHash() string {
+	return fmt.Sprintf("%x", sha256.Sum256([]byte(g.EventDefinitionTitle)))
+}
+
 // ExtractAlertMetrics return Alert from GraylogOutput
 func (g GraylogOutput) ExtractAlertMetrics() (*database.Alert, error) {
+	// Default labels
 	severity, err := utils.RePriority(g.Event.Priority)
 	if err != nil {
 		return nil, err
 	}
-	return &database.Alert{
-		ID:          fmt.Sprintf("%x", utils.Hash(g.EventDefinitionTitle+g.Event.Source)),
-		Title:       g.EventDefinitionTitle,
-		Description: g.EventDefinitionDescription,
-		Source:      g.Event.Source,
-		Priority:    severity,
-		Timeout:     viper.GetInt("timeout"),
-	}, nil
+	alert := database.Alert{
+		ID:      g.GetTableIDHash(),
+		Timeout: viper.GetInt("timeout"),
+		Data: map[string]string{
+			"title":       g.EventDefinitionTitle,
+			"description": g.EventDefinitionDescription,
+			"source":      g.Event.Source,
+			"priority":    severity,
+		},
+	}
+
+	// Dynamic labels
+	for k, v := range viper.GetStringMapString("labels") {
+		alert.Data[k] = utils.GetValueFromJSON(v, g).(string)
+	}
+
+	return &alert, nil
 }
 
 // GetGraylogOutputHandler is handler for store graylog alert payload
@@ -74,6 +90,7 @@ func GetGraylogOutputHandler(c *fiber.Ctx) error {
 			"message": err,
 		})
 	}
+
 	alert, _ := g.ExtractAlertMetrics()
 	database.InsertAlert(*alert)
 

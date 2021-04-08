@@ -30,14 +30,9 @@ func PrometheusHandler(ctx *fiber.Ctx) error {
 	for _, alert := range alerts {
 		m := prometheus.NewGauge(
 			prometheus.GaugeOpts{
-				Name: "main_metrics",
-				Help: "Main metric",
-				ConstLabels: map[string]string{
-					"event_title":       alert.Title,
-					"event_description": alert.Description,
-					"event_source":      alert.Source,
-					"event_priority":    alert.Priority,
-				},
+				Name:        "graylog_alert_status",
+				Help:        "Graylog alert status [0 is Resolved, 1 is Firing]",
+				ConstLabels: alert.Data,
 			},
 		)
 		m.Set(Firing)

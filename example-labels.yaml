@@ -1,0 +1,4 @@
+labels:
+  event_id: event.id
+  event_definition_id: event_definition_id
+  backlog_index: backlog.0.index
