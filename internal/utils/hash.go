@@ -1,11 +1,12 @@
 // Package utils provides utility function to help and reduce dumplicate code
 package utils
 
-import "crypto/sha256"
+import (
+	"crypto/sha256"
+	"fmt"
+)
 
 // Hash use sha256 to hash and return in string format
 func Hash(s string) string {
-	h := sha256.New()
-	h.Write([]byte(s))
-	return string(h.Sum(nil))
+	return fmt.Sprintf("%x", sha256.Sum256([]byte(s)))
 }

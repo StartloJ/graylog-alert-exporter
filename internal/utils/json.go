@@ -19,12 +19,14 @@ func PrettyJSON(s interface{}) string {
 	return string(pretty)
 }
 
+// FIXME: Solve bug here
+
 // GetValueFromJSON return value of json in specific path
 func GetValueFromJSON(path string, j interface{}) interface{} {
 	var obj map[string]interface{}
 	b, err := json.Marshal(j)
 	if err != nil {
-		logrus.Panic(err)
+		logrus.Error(err)
 	}
 	json.Unmarshal(b, &obj)
 

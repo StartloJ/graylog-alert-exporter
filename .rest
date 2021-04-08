@@ -72,7 +72,7 @@ content-type: application/json
       "timestamp_processing":"2021-04-05T10:19:34.728Z",
       "timerange_start":null,
       "timerange_end":null,
-      "streams":[],
+      "streams":["asdasd", "qweqwe"],
       "source_streams":[],
       "message":"nginx 301",
       "source":"pepodev-test",

@@ -2,3 +2,4 @@ labels:
   event_id: event.id
   event_definition_id: event_definition_id
   backlog_index: backlog.1.index
+  event_stream: event.streams.2
