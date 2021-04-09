@@ -25,7 +25,7 @@ var (
 	date    = "unknown"
 	builtBy = "unknown"
 
-	//go:embed index.html
+	//go:embed index.tpl
 	resources embed.FS
 )
 
@@ -46,7 +46,7 @@ func main() {
 	log.Init()
 	database.Init()
 
-	app := fiber.New(fiber.Config{Views: html.NewFileSystem(http.FS(resources), ".html")})
+	app := fiber.New(fiber.Config{Views: html.NewFileSystem(http.FS(resources), ".tpl")})
 	app.Use(logger.New())
 	app.Use(etag.New())
 
