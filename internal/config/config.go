@@ -21,26 +21,14 @@ func Init() {
 	pflag.StringP("label_file", "f", "labels.yaml", "Map labels config file to dynamic label in Prometheus metrics")
 	pflag.BoolP("version", "v", false, "print version")
 	pflag.Parse()
-	err := viper.BindPFlags(pflag.CommandLine)
-	logrus.Error(err)
+	if err := viper.BindPFlags(pflag.CommandLine); err != nil {
+		logrus.Error(err)
+	}
 
 	replacer := strings.NewReplacer("-", "_")
 	viper.SetEnvKeyReplacer(replacer)
 	viper.SetEnvPrefix("exporter")
-	err = viper.BindEnv("listen")
-	logrus.Debug(err)
-	err = viper.BindEnv("path")
-	logrus.Debug(err)
-	err = viper.BindEnv("timeout")
-	logrus.Debug(err)
-	err = viper.BindEnv("interval")
-	logrus.Debug(err)
-	err = viper.BindEnv("debug")
-	logrus.Debug(err)
-	err = viper.BindEnv("caller")
-	logrus.Debug(err)
-	err = viper.BindEnv("label_file")
-	logrus.Debug(err)
+	viper.AutomaticEnv()
 
 	if viper.IsSet("label_file") {
 		file, err := os.Open(viper.GetString("label_file"))
