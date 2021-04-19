@@ -7,8 +7,9 @@ This exporter will receive alert events from graylog and create metrics about al
 [![GitHub](https://img.shields.io/github/license/StartloJ/graylog-alert-exporter)](https://github.com/StartloJ/graylog-alert-exporter/blob/main/LICENSE)
 
 ## Architecture Diagram
-
-<!-- TODO: Add Architecture Diagram -->
+  
+<img src="./img/graylog-alert-exporter.png">
+  
 
 ## Table of Contents
 
