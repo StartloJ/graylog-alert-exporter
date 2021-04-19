@@ -1,0 +1,11 @@
+groups:
+- name: Found alert from graylog exporter
+  rules:
+  - alert: GraylogAlertTriggered
+    expr: graylog_alert_status > 0
+    for: 1m
+    labels:
+      severity: "{{ $labels.priority }}"
+    annotations:
+      description: "{{ $labels.description }}"
+      summary: "{{ $labels.title }}"

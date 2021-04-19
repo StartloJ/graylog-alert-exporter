@@ -1,0 +1,4 @@
+labels:
+  kubernetes_namespace_name: backlog.0.fields.kubernetes_namespace_name
+  kubernetes_pod_name: backlog.0.fields.kubernetes_pod_name
+  zone: backlog.0.fields.zone
