@@ -21,7 +21,7 @@ type Alert struct {
 	Data    map[string]string
 }
 
-// Init is function to create database schema and create presistance database connection
+// Init is function to create database schema and create persistance database connection
 func Init() {
 	schema := &memdb.DBSchema{
 		Tables: map[string]*memdb.TableSchema{
