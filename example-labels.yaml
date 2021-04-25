@@ -2,4 +2,4 @@ labels:
   event_id: .event.id
   event_definition_id: .event_definition_id
   backlog_index: .backlog.[0].index
-  event_priority: .event.priority
+  backlog_level: .backlog.[0].fields.level

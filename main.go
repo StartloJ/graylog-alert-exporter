@@ -60,5 +60,5 @@ func main() {
 	scheduler.StartTimeoutScheduler(viper.GetInt("interval"))
 
 	logrus.Info("Starting graylog alert exporter")
-	logrus.Panic(app.Listen(viper.GetString("listen")))
+	logrus.Error(app.Listen(viper.GetString("listen")))
 }

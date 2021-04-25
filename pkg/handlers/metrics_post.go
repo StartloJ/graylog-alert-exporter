@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"graylog-alert-exporter/internal/utils"
 	"graylog-alert-exporter/pkg/database"
 	"time"
@@ -74,7 +75,7 @@ func (g GraylogOutput) ExtractAlertMetrics() (*database.Alert, error) {
 			continue
 		}
 
-		alert.Data[k] = utils.GetInterfaceValueAsString(value)
+		alert.Data[k] = fmt.Sprintf("%v", value)
 	}
 
 	return &alert, nil

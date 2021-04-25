@@ -28,15 +28,9 @@ func GetValueFromJSON(path string, j interface{}) (interface{}, error) {
 		return nil, err
 	}
 
-	var input map[string]interface{}
-	b, err := json.Marshal(j)
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal(b, &input)
-	if err != nil {
-		return nil, err
-	}
+	input := make(map[string]interface{})
+	b, _ := json.Marshal(j)
+	json.Unmarshal(b, &input)
 
 	var result interface{}
 	iter := query.Run(input)
