@@ -3,7 +3,6 @@ package utils
 
 import (
 	"encoding/json"
-	"log"
 
 	"github.com/itchyny/gojq"
 	"github.com/sirupsen/logrus"
@@ -13,7 +12,8 @@ import (
 func PrettyJSON(s interface{}) string {
 	pretty, err := json.MarshalIndent(s, "", "  ")
 	if err != nil {
-		log.Fatalf(err.Error())
+		logrus.Error(err)
+		return ""
 	}
 	return string(pretty)
 }
@@ -25,17 +25,17 @@ func GetValueFromJSON(path string, j interface{}) (interface{}, error) {
 
 	query, err := gojq.Parse(path)
 	if err != nil {
-		logrus.Fatal(err)
+		return nil, err
 	}
 
 	var input map[string]interface{}
 	b, err := json.Marshal(j)
 	if err != nil {
-		logrus.Error(err)
+		return nil, err
 	}
 	err = json.Unmarshal(b, &input)
 	if err != nil {
-		logrus.Error(err)
+		return nil, err
 	}
 
 	var result interface{}
@@ -47,7 +47,6 @@ func GetValueFromJSON(path string, j interface{}) (interface{}, error) {
 		}
 
 		if err, ok := v.(error); ok {
-			logrus.Fatal(err)
 			return nil, err
 		}
 

@@ -32,11 +32,11 @@ func Init() {
 	if viper.IsSet("label_file") {
 		file, err := os.Open(viper.GetString("label_file"))
 		if err != nil {
-			logrus.Panic(err)
+			logrus.Fatalf("Unable to open file: ", err)
 		}
 		viper.SetConfigType("yaml")
 		if err := viper.ReadConfig(file); err != nil {
-			logrus.Panic(err)
+			logrus.Fatalf("Unable to read file labels: ", err)
 		}
 	}
 }
