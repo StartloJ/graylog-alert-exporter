@@ -7,6 +7,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.7.1
 	github.com/gofiber/template v1.6.8
 	github.com/hashicorp/go-memdb v1.3.2
+	github.com/itchyny/gojq v0.12.3 // indirect
 	github.com/klauspost/compress v1.11.13 // indirect
 	github.com/prometheus/client_golang v1.10.0
 	github.com/sirupsen/logrus v1.8.1

@@ -4,9 +4,8 @@ package utils
 import (
 	"encoding/json"
 	"log"
-	"strconv"
-	"strings"
 
+	"github.com/itchyny/gojq"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,54 +18,42 @@ func PrettyJSON(s interface{}) string {
 	return string(pretty)
 }
 
-// FIXME: Solve bug here
-
 // GetValueFromJSON return value of json in specific path
-func GetValueFromJSON(path string, j interface{}) interface{} {
-	var obj map[string]interface{}
+func GetValueFromJSON(path string, j interface{}) (interface{}, error) {
+	logrus.Debugf("Query path: %s", path)
+	logrus.Debugf("Query Json:\n%s", PrettyJSON(j))
+
+	query, err := gojq.Parse(path)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	var input map[string]interface{}
 	b, err := json.Marshal(j)
 	if err != nil {
 		logrus.Error(err)
 	}
-	err = json.Unmarshal(b, &obj)
+	err = json.Unmarshal(b, &input)
 	if err != nil {
 		logrus.Error(err)
 	}
 
-	paths := strings.Split(path, ".")
-	if len(paths) == 1 {
-		return obj[path]
+	var result interface{}
+	iter := query.Run(input)
+	for {
+		v, ok := iter.Next()
+		if !ok {
+			break
+		}
+
+		if err, ok := v.(error); ok {
+			logrus.Fatal(err)
+			return nil, err
+		}
+
+		result = v
+		logrus.Debugf("Query value: %v", result)
 	}
 
-	logrus.Debugf("Get value from json path %v \n%v\n", paths, PrettyJSON(obj))
-	if _, err := strconv.Atoi(paths[1:][0]); err == nil {
-		return getValueFromSlice(paths[1:], obj[paths[0]].([]interface{}))
-	}
-	return getValueFromMap(paths[1:], obj[paths[0]].(map[string]interface{}))
-}
-
-func getValueFromMap(paths []string, obj map[string]interface{}) interface{} {
-	if len(paths) == 1 {
-		return obj[paths[0]]
-	}
-
-	logrus.Debugf("Get value from json path %v \n%v\n", paths, PrettyJSON(obj))
-	if _, err := strconv.Atoi(paths[1:][0]); err == nil {
-		return getValueFromSlice(paths[1:], obj[paths[0]].([]interface{}))
-	}
-	return getValueFromMap(paths[1:], obj[paths[0]].(map[string]interface{}))
-}
-
-func getValueFromSlice(paths []string, obj []interface{}) interface{} {
-	i, err := strconv.Atoi(paths[0])
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	if len(paths) == 1 {
-
-		return obj[i]
-	}
-
-	logrus.Debugf("Get value from json path %v \n%v\n", paths, PrettyJSON(obj))
-	return getValueFromMap(paths[1:], obj[i].(map[string]interface{}))
+	return result, nil
 }
