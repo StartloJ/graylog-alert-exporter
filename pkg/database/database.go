@@ -68,7 +68,7 @@ func InsertAlerts(alerts []Alert) {
 	txn.Commit()
 }
 
-// GetAlertByTitle return Alert thaht match with Title from database
+// GetAlertByTitle return Alert that match with Title from database
 func GetAlertByTitle(title string) Alert {
 	txn := db.Txn(false)
 	raw, err := txn.First(TableName, IndexName, title)
