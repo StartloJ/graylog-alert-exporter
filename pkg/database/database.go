@@ -15,10 +15,9 @@ var db *memdb.MemDB
 
 // Alert is struct of database schema
 type Alert struct {
-	ID string
-
-	Timeout int
-	Data    map[string]string
+	ID      string            `json:"ID"`
+	Timeout int               `json:"Timeout"`
+	Data    map[string]string `json:"Data"`
 }
 
 // Init is function to create database schema and create persistance database connection
@@ -68,8 +67,8 @@ func InsertAlerts(alerts []Alert) {
 	txn.Commit()
 }
 
-// GetAlertByTitle return Alert that match with Title from database
-func GetAlertByTitle(title string) Alert {
+// GetAlertByID return Alert that match with Title from database
+func GetAlertByID(title string) Alert {
 	txn := db.Txn(false)
 	raw, err := txn.First(TableName, IndexName, title)
 	if err != nil {
@@ -81,16 +80,27 @@ func GetAlertByTitle(title string) Alert {
 }
 
 // GetAllAlerts return all alerts in database as slice of struct
-func GetAllAlerts() (alerts []Alert) {
+func GetAllAlerts() []Alert {
 	txn := db.Txn(false)
 	it, err := txn.Get(TableName, IndexName)
 	if err != nil {
 		logrus.Error("Error to get all records from database: ", err)
 		return nil
 	}
+	alerts := make([]Alert, 0)
 	for obj := it.Next(); obj != nil; obj = it.Next() {
 		alerts = append(alerts, obj.(Alert))
 	}
 	logrus.Debugf("Get all alerts\n%v\n", utils.PrettyJSON(alerts))
 	return alerts
+}
+
+// RemoveAlert remove a record by id
+func RemoveAlert(id string) error {
+	txn := db.Txn(true)
+	if err := txn.Delete(TableName, GetAlertByID(id)); err != nil {
+		return err
+	}
+	txn.Commit()
+	return nil
 }
