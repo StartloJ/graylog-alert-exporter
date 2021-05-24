@@ -3,10 +3,8 @@ package utils
 
 import (
 	"encoding/json"
-	"log"
-	"strconv"
-	"strings"
 
+	"github.com/itchyny/gojq"
 	"github.com/sirupsen/logrus"
 )
 
@@ -14,59 +12,43 @@ import (
 func PrettyJSON(s interface{}) string {
 	pretty, err := json.MarshalIndent(s, "", "  ")
 	if err != nil {
-		log.Fatalf(err.Error())
+		logrus.Error(err)
+		return ""
 	}
 	return string(pretty)
 }
 
-// FIXME: Solve bug here
-
 // GetValueFromJSON return value of json in specific path
-func GetValueFromJSON(path string, j interface{}) interface{} {
-	var obj map[string]interface{}
-	b, err := json.Marshal(j)
+func GetValueFromJSON(path string, j interface{}) (interface{}, error) {
+	logrus.Debugf("Query path: %s", path)
+	logrus.Debugf("Query Json:\n%s", PrettyJSON(j))
+
+	query, err := gojq.Parse(path)
 	if err != nil {
-		logrus.Error(err)
-	}
-	err = json.Unmarshal(b, &obj)
-	if err != nil {
-		logrus.Error(err)
+		return nil, err
 	}
 
-	paths := strings.Split(path, ".")
-	if len(paths) == 1 {
-		return obj[path]
+	input := make(map[string]interface{})
+	b, _ := json.Marshal(j)
+	if err := json.Unmarshal(b, &input); err != nil {
+		return nil, err
 	}
 
-	logrus.Debugf("Get value from json path %v \n%v\n", paths, PrettyJSON(obj))
-	if _, err := strconv.Atoi(paths[1:][0]); err == nil {
-		return getValueFromSlice(paths[1:], obj[paths[0]].([]interface{}))
-	}
-	return getValueFromMap(paths[1:], obj[paths[0]].(map[string]interface{}))
-}
+	var result interface{}
+	iter := query.Run(input)
+	for {
+		v, ok := iter.Next()
+		if !ok {
+			break
+		}
 
-func getValueFromMap(paths []string, obj map[string]interface{}) interface{} {
-	if len(paths) == 1 {
-		return obj[paths[0]]
-	}
+		if err, ok := v.(error); ok {
+			return nil, err
+		}
 
-	logrus.Debugf("Get value from json path %v \n%v\n", paths, PrettyJSON(obj))
-	if _, err := strconv.Atoi(paths[1:][0]); err == nil {
-		return getValueFromSlice(paths[1:], obj[paths[0]].([]interface{}))
-	}
-	return getValueFromMap(paths[1:], obj[paths[0]].(map[string]interface{}))
-}
-
-func getValueFromSlice(paths []string, obj []interface{}) interface{} {
-	i, err := strconv.Atoi(paths[0])
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	if len(paths) == 1 {
-
-		return obj[i]
+		result = v
+		logrus.Debugf("Query value: %v", result)
 	}
 
-	logrus.Debugf("Get value from json path %v \n%v\n", paths, PrettyJSON(obj))
-	return getValueFromMap(paths[1:], obj[i].(map[string]interface{}))
+	return result, nil
 }

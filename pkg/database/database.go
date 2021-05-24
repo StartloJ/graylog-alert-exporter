@@ -15,13 +15,12 @@ var db *memdb.MemDB
 
 // Alert is struct of database schema
 type Alert struct {
-	ID string
-
-	Timeout int
-	Data    map[string]string
+	ID      string            `json:"ID"`
+	Timeout int               `json:"Timeout"`
+	Data    map[string]string `json:"Data"`
 }
 
-// Init is function to create database schema and create presistance database connection
+// Init is function to create database schema and create persistance database connection
 func Init() {
 	schema := &memdb.DBSchema{
 		Tables: map[string]*memdb.TableSchema{
@@ -49,7 +48,8 @@ func InsertAlert(alert Alert) {
 	logrus.Debugf("Insert alert to database\n%s\n", utils.PrettyJSON(alert))
 	txn := db.Txn(true)
 	if err := txn.Insert(TableName, alert); err != nil {
-		logrus.Fatal(err)
+		logrus.Error("Error to insert record into database: ", err)
+		return
 	}
 	txn.Commit()
 }
@@ -60,33 +60,47 @@ func InsertAlerts(alerts []Alert) {
 	for i, alert := range alerts {
 		logrus.Debugf("Insert alert %d to database\n%s\n", i, utils.PrettyJSON(alert))
 		if err := txn.Insert(TableName, alert); err != nil {
-			logrus.Fatal(err)
+			logrus.Error("Error to insert records into database: ", err)
+			return
 		}
 	}
 	txn.Commit()
 }
 
-// GetAlertByTitle return Alert thaht match with Title from database
-func GetAlertByTitle(title string) Alert {
+// GetAlertByID return Alert that match with Title from database
+func GetAlertByID(title string) Alert {
 	txn := db.Txn(false)
 	raw, err := txn.First(TableName, IndexName, title)
 	if err != nil {
-		logrus.Fatal(err)
+		logrus.Error("Error to get record by title from database: ", err)
+		return Alert{}
 	}
 	logrus.Debugf("Get alert by name %s\n%v\n", title, utils.PrettyJSON(raw.(Alert)))
 	return raw.(Alert)
 }
 
 // GetAllAlerts return all alerts in database as slice of struct
-func GetAllAlerts() (alerts []Alert) {
+func GetAllAlerts() []Alert {
 	txn := db.Txn(false)
 	it, err := txn.Get(TableName, IndexName)
 	if err != nil {
-		logrus.Fatal(err)
+		logrus.Error("Error to get all records from database: ", err)
+		return nil
 	}
+	alerts := make([]Alert, 0)
 	for obj := it.Next(); obj != nil; obj = it.Next() {
 		alerts = append(alerts, obj.(Alert))
 	}
 	logrus.Debugf("Get all alerts\n%v\n", utils.PrettyJSON(alerts))
 	return alerts
+}
+
+// RemoveAlert remove a record by id
+func RemoveAlert(id string) error {
+	txn := db.Txn(true)
+	if err := txn.Delete(TableName, GetAlertByID(id)); err != nil {
+		return err
+	}
+	txn.Commit()
+	return nil
 }

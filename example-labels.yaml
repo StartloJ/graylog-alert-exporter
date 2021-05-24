@@ -1,5 +1,5 @@
 labels:
-  event_id: event.id
-  event_definition_id: event_definition_id
-  backlog_index: backlog.1.index
-  event_stream: event.streams.2
+  event_id: .event.id
+  event_definition_id: .event_definition_id
+  backlog_index: .backlog.[0].index
+  backlog_level: .backlog.[0].fields.level

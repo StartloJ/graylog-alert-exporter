@@ -1,0 +1,21 @@
+root = "."
+tmp_dir = ".temp"
+
+[build]
+cmd = "go build -o .temp/main ."
+bin = ".temp/main"
+full_bin = ".temp/main -f example-labels.yaml --debug"
+include_ext = ["go", "html"]
+exclude_dir = [".temp"]
+include_dir = []
+exclude_file = []
+exclude_regex = []
+exclude_unchanged = true
+follow_symlink = true
+log = "air.log"
+delay = 1000
+stop_on_error = false
+send_interrupt = false
+
+[misc]
+clean_on_exit = true

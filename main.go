@@ -8,13 +8,15 @@ import (
 	"graylog-alert-exporter/pkg/database"
 	"graylog-alert-exporter/pkg/handlers"
 	"graylog-alert-exporter/pkg/scheduler"
+	"io/fs"
 	"net/http"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/etag"
+	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/template/html"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -25,7 +27,7 @@ var (
 	date    = "unknown"
 	builtBy = "unknown"
 
-	//go:embed index.tpl
+	//go:embed web/index.html
 	resources embed.FS
 )
 
@@ -46,19 +48,30 @@ func main() {
 	log.Init()
 	database.Init()
 
-	app := fiber.New(fiber.Config{Views: html.NewFileSystem(http.FS(resources), ".tpl")})
-	app.Use(logger.New())
+	app := fiber.New()
 	app.Use(etag.New())
+	app.Use(compress.New(compress.Config{
+		Level: compress.LevelBestCompression,
+	}))
+	app.Use(logger.New())
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Render("index", fiber.Map{"link": viper.GetString("path"), "dashboard": viper.GetBool("dashboard")})
-	})
+	webDir, _ := fs.Sub(resources, "web")
+	app.Use("/", filesystem.New(filesystem.Config{
+		Root:   http.FS(webDir),
+		Browse: true,
+		Index:  "index.html",
+	}))
 
 	app.Get(viper.GetString("path"), handlers.PrometheusHandler)
 	app.Post(viper.GetString("path"), handlers.GetGraylogOutputHandler)
 
+	api := app.Group("/api")
+	api.Get("/alerts", handlers.GetAlerts)
+	api.Put("/alert", handlers.UpdateAlert)
+	api.Delete("/alert/:id", handlers.DeleteAlert)
+
 	scheduler.StartTimeoutScheduler(viper.GetInt("interval"))
 
 	logrus.Info("Starting graylog alert exporter")
-	logrus.Panic(app.Listen(viper.GetString("listen")))
+	logrus.Error(app.Listen(viper.GetString("listen")))
 }

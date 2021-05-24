@@ -17,7 +17,6 @@ func Init() {
 	pflag.IntP("timeout", "t", 60, "timeout of alert to make it resolved in second")
 	pflag.IntP("interval", "i", 5, "interval to check timeout (lower value consume more cpu) in second")
 	pflag.Bool("debug", false, "enable debug log")
-	pflag.Bool("caller", false, "enable log method caller in code")
 	pflag.StringP("label_file", "f", "labels.yaml", "Map labels config file to dynamic label in Prometheus metrics")
 	pflag.BoolP("version", "v", false, "print version")
 	pflag.Parse()
@@ -33,11 +32,11 @@ func Init() {
 	if viper.IsSet("label_file") {
 		file, err := os.Open(viper.GetString("label_file"))
 		if err != nil {
-			logrus.Panic(err)
+			logrus.Fatalf("Unable to open file: %v", err)
 		}
 		viper.SetConfigType("yaml")
 		if err := viper.ReadConfig(file); err != nil {
-			logrus.Panic(err)
+			logrus.Fatalf("Unable to read file labels: %v", err)
 		}
 	}
 }

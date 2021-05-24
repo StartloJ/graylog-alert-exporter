@@ -4,10 +4,17 @@ package scheduler
 import (
 	"graylog-alert-exporter/pkg/database"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 // StartTimeoutScheduler enable scheduler reduce timeout in struct. 'interval' are set in second.
 func StartTimeoutScheduler(interval int) {
+	if interval <= 0 {
+		logrus.Warn("Timeout scheduler is disabled because interval is set less than or equal zero")
+		return
+	}
+
 	go func() {
 		for {
 			alerts := database.GetAllAlerts()

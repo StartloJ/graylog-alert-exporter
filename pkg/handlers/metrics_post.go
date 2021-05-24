@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"fmt"
 	"graylog-alert-exporter/internal/utils"
 	"graylog-alert-exporter/pkg/database"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -67,7 +69,13 @@ func (g GraylogOutput) ExtractAlertMetrics() (*database.Alert, error) {
 
 	// Dynamic labels
 	for k, v := range viper.GetStringMapString("labels") {
-		alert.Data[k] = utils.GetValueFromJSON(v, g).(string)
+		value, err := utils.GetValueFromJSON(v, g)
+		if err != nil {
+			logrus.Errorf("Error when query json result: %v", err)
+			continue
+		}
+
+		alert.Data[k] = fmt.Sprintf("%v", value)
 	}
 
 	return &alert, nil
