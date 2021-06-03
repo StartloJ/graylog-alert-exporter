@@ -56,18 +56,20 @@ func main() {
 	app.Use(logger.New())
 
 	webDir, _ := fs.Sub(resources, "web")
-	app.Use("/", filesystem.New(filesystem.Config{
-		Root:   http.FS(webDir),
-		Browse: true,
-		Index:  "index.html",
-	}))
+	if viper.GetBool("dashboard") {
+		app.Use("/", filesystem.New(filesystem.Config{
+			Root:   http.FS(webDir),
+			Browse: true,
+			Index:  "index.html",
+		}))
+	}
 
 	app.Get(viper.GetString("path"), handlers.PrometheusHandler)
 	app.Post(viper.GetString("path"), handlers.GetGraylogOutputHandler)
 
 	api := app.Group("/api")
 	api.Get("/alerts", handlers.GetAlerts)
-	api.Put("/alert", handlers.UpdateAlert)
+	api.Post("/alert", handlers.UpdateAlert)
 	api.Delete("/alert/:id", handlers.DeleteAlert)
 
 	scheduler.StartTimeoutScheduler(viper.GetInt("interval"))
