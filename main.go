@@ -13,8 +13,6 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/compress"
-	"github.com/gofiber/fiber/v2/middleware/etag"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/sirupsen/logrus"
@@ -27,7 +25,7 @@ var (
 	date    = "unknown"
 	builtBy = "unknown"
 
-	//go:embed web/index.html
+	//go:embed web/*
 	resources embed.FS
 )
 
@@ -49,10 +47,6 @@ func main() {
 	database.Init()
 
 	app := fiber.New()
-	app.Use(etag.New())
-	app.Use(compress.New(compress.Config{
-		Level: compress.LevelBestCompression,
-	}))
 	app.Use(logger.New())
 
 	webDir, _ := fs.Sub(resources, "web")
