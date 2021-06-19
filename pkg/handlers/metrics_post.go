@@ -81,8 +81,8 @@ func (g GraylogOutput) ExtractAlertMetrics() (*database.Alert, error) {
 	return &alert, nil
 }
 
-// GetGraylogOutputHandler is handler for store graylog alert payload
-func GetGraylogOutputHandler(c *fiber.Ctx) error {
+// ReceiveGraylogAlertHandler is handler for store graylog alert payload
+func ReceiveGraylogAlertHandler(c *fiber.Ctx) error {
 	g := GraylogOutput{}
 	err := c.BodyParser(&g)
 	if err != nil {
@@ -92,8 +92,20 @@ func GetGraylogOutputHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	alert, _ := g.ExtractAlertMetrics()
-	database.InsertAlert(*alert)
+	alert, err := g.ExtractAlertMetrics()
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+			"status":  "error",
+			"message": err,
+		})
+	}
+
+	if err := database.InsertAlert(*alert); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
+			"status":  "error",
+			"message": err,
+		})
+	}
 
 	return c.Status(fiber.StatusCreated).JSON(&fiber.Map{
 		"status":  "success",

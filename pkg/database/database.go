@@ -44,14 +44,15 @@ func Init() {
 }
 
 // InsertAlert will add Alert into database
-func InsertAlert(alert Alert) {
+func InsertAlert(alert Alert) error {
 	logrus.Debugf("Insert alert to database\n%s\n", utils.PrettyJSON(alert))
 	txn := db.Txn(true)
 	if err := txn.Insert(TableName, alert); err != nil {
 		logrus.Error("Error to insert record into database: ", err)
-		return
+		return err
 	}
 	txn.Commit()
+	return nil
 }
 
 // InsertAlerts will add slice of Alert into database

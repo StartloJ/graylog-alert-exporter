@@ -59,7 +59,7 @@ func main() {
 	}
 
 	app.Get(viper.GetString("path"), handlers.PrometheusHandler)
-	app.Post(viper.GetString("path"), handlers.GetGraylogOutputHandler)
+	app.Post(viper.GetString("path"), handlers.ReceiveGraylogAlertHandler)
 
 	api := app.Group("/api")
 	api.Get("/alerts", handlers.GetAlerts)
