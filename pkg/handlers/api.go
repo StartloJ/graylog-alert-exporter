@@ -33,7 +33,7 @@ func UpdateAlert(c *fiber.Ctx) error {
 	if err := database.InsertAlert(alert); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(&fiber.Map{
 			"status":  "error",
-			"message": err,
+			"message": err.Error(),
 		})
 	}
 
