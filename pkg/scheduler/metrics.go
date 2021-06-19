@@ -22,7 +22,7 @@ func StartTimeoutScheduler(interval int) {
 				if alert.Timeout > 0 {
 					alert.Timeout -= interval
 					if err := database.InsertAlert(alert); err != nil {
-						logrus.Error("Something went wrong: ", err)
+						logrus.Error("Something went wrong: ", err.Error())
 					}
 				}
 			}
