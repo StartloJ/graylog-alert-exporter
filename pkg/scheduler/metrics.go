@@ -21,7 +21,9 @@ func StartTimeoutScheduler(interval int) {
 			for _, alert := range alerts {
 				if alert.Timeout > 0 {
 					alert.Timeout -= interval
-					database.InsertAlert(alert)
+					if err := database.InsertAlert(alert); err != nil {
+						logrus.Error("Something went wrong: ", err)
+					}
 				}
 			}
 			time.Sleep(time.Second * time.Duration(interval))
