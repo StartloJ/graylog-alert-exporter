@@ -24,6 +24,8 @@ This exporter will receive alert events from graylog and create metrics about al
     - [Use with dynamic labels](#use-with-dynamic-labels)
   - [Routes](#routes)
   - [Config with Environment Variables and Flags](#config-with-environment-variables-and-flags)
+  - [How to use API](#how-to-use-api)
+    - [For example use case, you start app in localhost and use default port.](#for-example-use-case-you-start-app-in-localhost-and-use-default-port)
   - [graylog spec](#graylog-spec)
 
 ## Installations
@@ -85,19 +87,78 @@ EXPORTER_INTERVAL|Frequency of concurrent to check metrics,that should resolve |
 EXPORTER_DEBUG|Enable debugging log on console(stdout/stderr)|bool|false/true
 EXPORTER_CALLER|Enable caller function to debugging|bool|false/true
 EXPORTER_LABEL_FILE|Path to get yaml file for metrics label structure|string|example.yaml
+EXPORTER_DASHBOARD|enable web application to control alert metrics in GUI|bool|false/true
 
 > In explaination of exporter's flag you can see with `--help`
 
 ```txt
 Usage:
-      --caller          enable log method caller in code
-      --debug           enable debug log
-      --interval int    interval to check timeout (lower value consume more cpu) (default 5)
-      --listen string   Host address to start service listen (default "0.0.0.0:9889")
-      --path string     path for scape and push metrics (default "metrics")
-      --timeout int     timeout of alert to make it resolved (default 60)
-      --version         print version
-      --label_file      Map labels config file to dynamic label in Prometheus metrics
+      --dashboard           enable web application to control alert metrics in GUI
+      --debug               enable debug log
+  -i, --interval int        interval to check timeout (lower value consume more cpu) in second (default 5)
+  -f, --label_file string   Map labels config file to dynamic label in Prometheus metrics (default "labels.yaml")
+  -l, --listen string       Host address to start service listen (default "0.0.0.0:9889")
+  -p, --path string         path for scape and push metrics (default "metrics")
+  -t, --timeout int         timeout of alert to make it resolved in second (default 60)
+  -v, --version             print version
+```
+
+## How to use API
+With **newly update** feature for support to manage metrics with `REST API`.  
+You can **update**, **get** and **delete** metrics on the fly. You see all api path  
+under `/api/alert(s)`.
+- **Get method**: `/api/alerts` to get all metrics.
+- **Delete method**: `/api/alert/<id>` to remove metrics with hash id.
+- **Post method**: `/api/alert` to add new metrics with json structure:
+  - ID: sha256 text
+  - Timeout: integer
+  - Data: map of json data
+
+  
+For example data in following code:
+```json
+{
+  "ID": "8ff1d293923dde8fa49a3227b4a4b4faad94f73cd1c41c60e712d4f1e421a788",
+  "Timeout": 30,
+  "Data": {
+    "statuscode":"500",
+    "namespace":"router",
+    "app_name":"nginx-tester",
+    "some_info":"kitty",
+    "zone":"OPSTA"
+  }
+}
+```
+
+### For example use case, you start app in localhost and use default port.
+- Insert metrics with `cURL`. Before you send api, you will create hash string from alert title.
+
+```console
+$ echo "Found error 503 in application" | sha256sum
+$ curl --request POST 'http://127.0.0.1:9889/api/alert' \
+--header 'Content-Type: application/json' \
+--data '{
+  "ID": "1d9b3a1b3710f0d28cf2efd82fafa480df453de2c75458945639f7b4f3dd32cd",
+  "Timeout": 30,
+  "Data": {
+    "statuscode":"500",
+    "namespace":"router",
+    "app_name":"nginx-tester",
+    "some_info":"kitty",
+    "zone":"OPSTA"
+  }
+}'
+```
+- Get all metrics in current database.
+
+```console
+$ curl --request GET 'http://127.0.0.1:9889/api/alerts'
+```
+- Delete inserted metrics
+
+```console
+$ MSG_HASH='1d9b3a1b3710f0d28cf2efd82fafa480df453de2c75458945639f7b4f3dd32cd'
+$ curl --request DELETE http://127.0.0.1:9889/api/alert/$MSG_HASH
 ```
 
 ## graylog spec
