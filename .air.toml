@@ -1,12 +1,12 @@
 root = "."
-tmp_dir = ".temp"
+tmp_dir = ".tmp"
 
 [build]
-cmd = "go build -o .temp/main ."
-bin = ".temp/main"
-full_bin = ".temp/main -f example-labels.yaml --debug"
+cmd = "go build -o .tmp/main ."
+bin = ".tmp/main"
+full_bin = ".tmp/main -f example-labels.yaml --debug --dashboard"
 include_ext = ["go", "html"]
-exclude_dir = [".temp"]
+exclude_dir = [".tmp"]
 include_dir = []
 exclude_file = []
 exclude_regex = []

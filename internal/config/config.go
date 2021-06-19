@@ -17,6 +17,7 @@ func Init() {
 	pflag.IntP("timeout", "t", 60, "timeout of alert to make it resolved in second")
 	pflag.IntP("interval", "i", 5, "interval to check timeout (lower value consume more cpu) in second")
 	pflag.Bool("debug", false, "enable debug log")
+	pflag.Bool("dashboard", false, "enable web application to control alert metrics in GUI")
 	pflag.StringP("label_file", "f", "labels.yaml", "Map labels config file to dynamic label in Prometheus metrics")
 	pflag.BoolP("version", "v", false, "print version")
 	pflag.Parse()

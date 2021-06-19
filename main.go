@@ -13,8 +13,6 @@ import (
 	"os"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/compress"
-	"github.com/gofiber/fiber/v2/middleware/etag"
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/sirupsen/logrus"
@@ -27,7 +25,7 @@ var (
 	date    = "unknown"
 	builtBy = "unknown"
 
-	//go:embed web/index.html
+	//go:embed web/*
 	resources embed.FS
 )
 
@@ -49,25 +47,23 @@ func main() {
 	database.Init()
 
 	app := fiber.New()
-	app.Use(etag.New())
-	app.Use(compress.New(compress.Config{
-		Level: compress.LevelBestCompression,
-	}))
 	app.Use(logger.New())
 
 	webDir, _ := fs.Sub(resources, "web")
-	app.Use("/", filesystem.New(filesystem.Config{
-		Root:   http.FS(webDir),
-		Browse: true,
-		Index:  "index.html",
-	}))
+	if viper.GetBool("dashboard") {
+		app.Use("/", filesystem.New(filesystem.Config{
+			Root:   http.FS(webDir),
+			Browse: true,
+			Index:  "index.html",
+		}))
+	}
 
 	app.Get(viper.GetString("path"), handlers.PrometheusHandler)
 	app.Post(viper.GetString("path"), handlers.GetGraylogOutputHandler)
 
 	api := app.Group("/api")
 	api.Get("/alerts", handlers.GetAlerts)
-	api.Put("/alert", handlers.UpdateAlert)
+	api.Post("/alert", handlers.UpdateAlert)
 	api.Delete("/alert/:id", handlers.DeleteAlert)
 
 	scheduler.StartTimeoutScheduler(viper.GetInt("interval"))
