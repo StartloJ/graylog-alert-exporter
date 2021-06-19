@@ -20,7 +20,10 @@ func TestAddAlert(t *testing.T) {
 		},
 		Timeout: 60,
 	}
-	database.InsertAlert(alert)
+
+	if err := database.InsertAlert(alert); err != nil {
+		t.Error("Error to insert record into database: ", err)
+	}
 
 	alerts := database.GetAllAlerts()
 	if len(alerts) != 1 {
@@ -35,7 +38,7 @@ func TestAddAlert(t *testing.T) {
 func TestMultiAddAlertAndGetAll(t *testing.T) {
 	database.Init()
 	for i := 0; i < 10; i++ {
-		database.InsertAlert(database.Alert{
+		if err := database.InsertAlert(database.Alert{
 			ID: utils.Hash(fmt.Sprintf("Test Title %d", i)),
 			Data: map[string]string{
 				"title":       fmt.Sprintf("Test Title %d", i),
@@ -44,11 +47,30 @@ func TestMultiAddAlertAndGetAll(t *testing.T) {
 				"priority":    "critical",
 			},
 			Timeout: 60,
-		})
+		}); err != nil {
+			t.Error("Error to insert record into database: ", err)
+		}
 	}
 
 	alerts := database.GetAllAlerts()
 	if len(alerts) != 10 {
 		t.Error("Total log in database not equal 1")
+	}
+}
+
+func TestMissingRequiredJsonField(t *testing.T) {
+	database.Init()
+
+	if err := database.InsertAlert(database.Alert{
+		ID: "",
+		Data: map[string]string{
+			"title":       "Test Title",
+			"description": "Test Desc",
+			"source":      "Test Source",
+			"priority":    "critical",
+		},
+		Timeout: 60,
+	}); err == nil {
+		t.Error("This should error because ID is empty")
 	}
 }
