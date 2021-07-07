@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/adaptor/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -22,7 +23,7 @@ func PrometheusHandler(ctx *fiber.Ctx) error {
 	Registry := prometheus.NewRegistry()
 
 	// Default metrics
-	GoBuildInfo := prometheus.NewBuildInfoCollector()
+	GoBuildInfo := collectors.NewBuildInfoCollector()
 	BuildInfoMetrics := prometheus.NewGauge(
 		prometheus.GaugeOpts{
 			Name: "exporter_build_info",
