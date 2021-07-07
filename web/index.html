@@ -125,9 +125,7 @@
 							text-white
 							hover:bg-gray-700
 							focus:outline-none
-							sm:ml-3
-							sm:w-auto
-							sm:text-sm
+							sm:ml-3 sm:w-auto sm:text-sm
 						"
 						@click="reset"
 					>
@@ -313,9 +311,7 @@
 															focus:ring-2
 															focus:ring-offset-2
 															focus:ring-green-500
-															sm:ml-3
-															sm:w-auto
-															sm:text-sm
+															sm:ml-3 sm:w-auto sm:text-sm
 														"
 													>
 														Resolve
@@ -341,9 +337,7 @@
 															focus:ring-2
 															focus:ring-offset-2
 															focus:ring-red-500
-															sm:ml-3
-															sm:w-auto
-															sm:text-sm
+															sm:ml-3 sm:w-auto sm:text-sm
 														"
 													>
 														Delete
@@ -376,8 +370,7 @@
 						px-4
 						pb-20
 						text-center
-						sm:block
-						sm:p-0
+						sm:block sm:p-0
 					"
 				>
 					<div
@@ -401,10 +394,7 @@
 							shadow-xl
 							transform
 							transition-all
-							sm:my-8
-							sm:align-middle
-							sm:max-w-lg
-							sm:w-full
+							sm:my-8 sm:align-middle sm:max-w-lg sm:w-full
 						"
 					>
 						<div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
@@ -419,9 +409,7 @@
 										w-12
 										rounded-full
 										bg-red-100
-										sm:mx-0
-										sm:h-10
-										sm:w-10
+										sm:mx-0 sm:h-10 sm:w-10
 									"
 								>
 									<svg
@@ -476,10 +464,10 @@
 									text-white
 									hover:bg-red-700
 									focus:outline-none
-									focus:ring-2 focus:ring-offset-2 focus:ring-red-500
-									sm:ml-3
-									sm:w-auto
-									sm:text-sm
+									focus:ring-2
+									focus:ring-offset-2
+									focus:ring-red-500
+									sm:ml-3 sm:w-auto sm:text-sm
 								"
 								@click="ConfirmDelete"
 							>
@@ -503,11 +491,10 @@
 									text-gray-700
 									hover:bg-gray-50
 									focus:outline-none
-									focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
-									sm:mt-0
-									sm:ml-3
-									sm:w-auto
-									sm:text-sm
+									focus:ring-2
+									focus:ring-offset-2
+									focus:ring-indigo-500
+									sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm
 								"
 								@click="showDeleteConfirmation = false"
 							>
@@ -546,6 +533,7 @@
 						this.showDeleteConfirmation = false;
 					},
 					updateAlert: function (alert) {
+						console.log(alert);
 						alert.Timeout = 0;
 						fetch("/api/alert", {
 							method: "POST",
@@ -560,17 +548,13 @@
 					},
 					search: function () {
 						let alerts = [];
-						console.log(this.searchText);
-						console.log(this.alertsAll);
 						this.alertsAll.map((alert) => {
-							console.log(alert);
 							if (alert.Data.description.indexOf(this.searchText) !== -1)
 								alerts.push(alert);
 							else if (alert.Data.title.indexOf(this.searchText) !== -1)
 								alerts.push(alert);
 						});
 						this.alerts = alerts;
-						console.log(this.alerts);
 					},
 					reset: function () {
 						this.searchText = "";
@@ -588,7 +572,6 @@
 					},
 					classAlertStatus: function (timeout) {
 						firing = timeout > 0;
-						console.log(firing);
 						return {
 							"bg-green-100": !firing,
 							"text-green-800": !firing,
@@ -606,17 +589,18 @@
 						})
 							.then((response) => response.json())
 							.then((data) => {
-								this.alerts = data.data.alerts;
-								this.alertsAll = this.alerts;
+								this.alertsAll = data.data.alerts;
+								this.alerts = this.alertsAll;
 								this.search();
 							});
 					},
 					getAlertStatus: function (timeout) {
 						return timeout > 0 ? "Firing" : "Resolved";
 					},
-					jsonSyntaxHighlight: function (json) {
-						delete json.description;
+					jsonSyntaxHighlight: function (alert) {
+						var json = Object.assign({}, alert);
 						delete json.title;
+						delete json.description;
 						json = JSON.stringify(json, null, 2)
 							.replace(/&/g, "&amp;")
 							.replace(/</g, "&lt;")
