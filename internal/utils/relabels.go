@@ -14,5 +14,5 @@ func RePriority(priority int) (string, error) {
 	case 3:
 		return "critical", nil
 	}
-	return "", errors.New("Cannot relabels priority to standard severity")
+	return "", errors.New("cannot relabels priority to standard severity")
 }
