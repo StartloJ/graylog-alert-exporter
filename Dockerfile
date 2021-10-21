@@ -5,7 +5,6 @@ ARG VERSION=dev
 ARG COMMIT=dev
 ARG DATE=dev
 RUN CGO_ENABLED=0 go build -ldflags "-s -w -X main.version=$VERSION -X main.commit=$COMMIT -X main.date=$DATE" -i -a -o app .
-CMD ["./git-tester"]
 
 FROM gcr.io/distroless/base
 WORKDIR /
